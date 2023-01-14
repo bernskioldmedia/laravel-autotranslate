@@ -25,9 +25,7 @@ it('can translate strings', function () {
     expect($results)->toEqual(collect([
         'My untranslated test string' => 'Min ej översatta teststräng',
     ]));
-
 });
-
 
 it('skips translating previously translated strings', function () {
     $this->partialMock(Translator::class, function (MockInterface $mock) {
@@ -51,5 +49,4 @@ it('skips translating previously translated strings', function () {
         'My untranslated test string' => 'Min ej översatta teststräng',
         'My already translated test string' => 'Min redan översatta teststräng',
     ]));
-
 });

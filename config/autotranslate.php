@@ -44,9 +44,9 @@ return [
 
     'language_options' => [
 
-//      'de' => [
-//          'formality' => 'less',
-//      ],
+        //      'de' => [
+        //          'formality' => 'less',
+        //      ],
 
     ],
 
