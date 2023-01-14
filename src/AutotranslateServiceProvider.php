@@ -3,7 +3,6 @@
 namespace BernskioldMedia\Autotranslate;
 
 use BernskioldMedia\Autotranslate\Commands\TranslateFile;
-use Closure;
 use DeepL\Translator;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
