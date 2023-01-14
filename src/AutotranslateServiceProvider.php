@@ -23,7 +23,7 @@ class AutotranslateServiceProvider extends PackageServiceProvider
             ->hasCommand(TranslateFile::class);
     }
 
-    public function booted(Closure $callback)
+    public function bootingPackage()
     {
         $this->app->bind(Translator::class, function () {
             return new Translator(config('autotranslate.api_key'));
