@@ -7,11 +7,9 @@ use Illuminate\Support\Collection;
 
 class TranslateStrings
 {
-
     public function __construct(
         protected Translator $translator
-    )
-    {
+    ) {
     }
 
     /**
@@ -28,7 +26,7 @@ class TranslateStrings
             options: $this->getDeepLTextOptions()
         );
 
-        $translations = collect($rawTranslations)->map(fn($translation) => $translation->text);
+        $translations = collect($rawTranslations)->map(fn ($translation) => $translation->text);
 
         // Add back the original keys to get the Original => Translated array structure.
         $translatedStrings = $stringsToTranslate->keys()->combine($translations);
@@ -38,14 +36,14 @@ class TranslateStrings
 
     protected function mergeNewTranslationsWithPrevious(Collection $newTranslations, Collection $originalStrings): Collection
     {
-        return $originalStrings->mapWithKeys(fn($value, $key) => [
-            $key => $newTranslations->get($key) ?? $value
+        return $originalStrings->mapWithKeys(fn ($value, $key) => [
+            $key => $newTranslations->get($key) ?? $value,
         ]);
     }
 
     protected function removePreviouslyTranslatedStrings(Collection $strings): Collection
     {
-        return $strings->filter(fn($value, $key) => $value === $key);
+        return $strings->filter(fn ($value, $key) => $value === $key);
     }
 
     protected function getDeepLTextOptions(): array
@@ -63,5 +61,4 @@ class TranslateStrings
     {
         return config("autotranslate.language_options.{$key}") ?? config("autotranslate.options.{$key}");
     }
-
 }
