@@ -2,9 +2,9 @@
 
 namespace BernskioldMedia\Autotranslate;
 
+use BernskioldMedia\Autotranslate\Commands\AutotranslateCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BernskioldMedia\Autotranslate\Commands\AutotranslateCommand;
 
 class AutotranslateServiceProvider extends PackageServiceProvider
 {
