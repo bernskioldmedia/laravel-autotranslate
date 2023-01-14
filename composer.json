@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "bernskioldmedia/laravel-autotranslate",
+    "description": "A Laravel package to automatically translate the application's language files into a chosen language using DeepL.",
     "keywords": [
-        ":vendor_name",
+        "bernskioldmedia",
         "laravel",
-        ":package_slug"
+        "laravel-autotranslate"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/bernskioldmedia/laravel-autotranslate",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Bernskiold Media",
+            "email": "hello@bernskioldmedia.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "BernskioldMedia\\Autotranslate\\": "src",
+            "BernskioldMedia\\Autotranslate\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "BernskioldMedia\\Autotranslate\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -61,10 +61,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "BernskioldMedia\\Autotranslate\\AutotranslateServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Autotranslate": "BernskioldMedia\\Autotranslate\\Facades\\Autotranslate"
             }
         }
     },
