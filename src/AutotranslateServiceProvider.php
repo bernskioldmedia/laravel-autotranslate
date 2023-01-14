@@ -2,9 +2,11 @@
 
 namespace BernskioldMedia\Autotranslate;
 
+use BernskioldMedia\Autotranslate\Commands\TranslateFile;
+use Closure;
+use DeepL\Translator;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BernskioldMedia\Autotranslate\Commands\AutotranslateCommand;
 
 class AutotranslateServiceProvider extends PackageServiceProvider
 {
@@ -18,8 +20,13 @@ class AutotranslateServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-autotranslate')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-autotranslate_table')
-            ->hasCommand(AutotranslateCommand::class);
+            ->hasCommand(TranslateFile::class);
+    }
+
+    public function booted(Closure $callback)
+    {
+        $this->app->bind(Translator::class, function () {
+            return new Translator(config('autotranslate.api_key'));
+        });
     }
 }
