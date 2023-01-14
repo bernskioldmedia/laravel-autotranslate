@@ -2,9 +2,9 @@
 
 namespace BernskioldMedia\Autotranslate\Tests;
 
+use BernskioldMedia\Autotranslate\AutotranslateServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use BernskioldMedia\Autotranslate\AutotranslateServiceProvider;
 
 class TestCase extends Orchestra
 {
