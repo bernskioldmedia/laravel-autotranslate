@@ -94,6 +94,12 @@ php artisan autotranslate:translate sv
 The language parameter is required, and should correspond to the language path within your application's languages
 folder.
 
+## Automatically exporting strings
+
+If you want to automatically export strings from your application to the language files, you can use
+the [Translatable String Exporter for Laravel](https://github.com/kkomelin/laravel-translatable-string-exporter)
+package.
+
 ## Testing
 
 ```bash
