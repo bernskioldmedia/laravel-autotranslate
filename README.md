@@ -15,6 +15,12 @@ You can install the package via composer:
 composer require bernskioldmedia/laravel-autotranslate
 ```
 
+You can install the package using the installation command:
+
+```bash
+php artisan autotranslate:install
+```
+
 You can publish the config file with:
 
 ```bash

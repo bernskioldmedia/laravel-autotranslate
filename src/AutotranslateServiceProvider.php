@@ -5,6 +5,7 @@ namespace BernskioldMedia\Autotranslate;
 use BernskioldMedia\Autotranslate\Commands\TranslateFile;
 use Closure;
 use DeepL\Translator;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -20,7 +21,11 @@ class AutotranslateServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-autotranslate')
             ->hasConfigFile()
-            ->hasCommand(TranslateFile::class);
+            ->hasCommand(TranslateFile::class)
+            ->hasInstallCommand(function (InstallCommand $command) {
+                $command->publishConfigFile()
+                    ->askToStarRepoOnGitHub('bernskioldmedia/laravel-autotranslate');
+            });
     }
 
     public function bootingPackage()
