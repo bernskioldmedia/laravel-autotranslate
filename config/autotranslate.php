@@ -42,6 +42,10 @@ return [
         'glossary' => null,
     ],
 
+    /**
+     * You can override the default options for specific languages.
+     * The key is the language code and the value is an array of options.
+     */
     'language_options' => [
 
         //      'de' => [
