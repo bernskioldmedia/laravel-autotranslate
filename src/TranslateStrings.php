@@ -17,7 +17,8 @@ class TranslateStrings
      */
     public function execute(Collection $strings, string $targetLanguage): Collection
     {
-        $stringsToTranslate = $this->removePreviouslyTranslatedStrings($strings);
+        $stringsToTranslate = $this->removePreviouslyTranslatedStrings($strings)
+            ->map(fn ($string) => $this->wrapVariablesInTags($string));
 
         $rawTranslations = $this->translator->translateText(
             texts: $stringsToTranslate->values()->toArray(),
@@ -26,7 +27,9 @@ class TranslateStrings
             options: $this->getDeepLTextOptions()
         );
 
-        $translations = collect($rawTranslations)->map(fn ($translation) => $translation->text);
+        $translations = collect($rawTranslations)
+            ->map(fn ($translation) => $translation->text)
+            ->map(fn ($translation) => $this->removeTagsFromVariables($translation));
 
         // Add back the original keys to get the Original => Translated array structure.
         $translatedStrings = $stringsToTranslate->keys()->combine($translations);
@@ -46,6 +49,16 @@ class TranslateStrings
         return $strings->filter(fn ($value, $key) => $value === $key);
     }
 
+    protected function wrapVariablesInTags(string $string): string
+    {
+        return preg_replace('/:(\w+)/', '<NOTRANSLATE>:$1</NOTRANSLATE>', $string);
+    }
+
+    protected function removeTagsFromVariables(string $string): string
+    {
+        return preg_replace('/<NOTRANSLATE>:(\w+)<\/NOTRANSLATE>/', ':$1', $string);
+    }
+
     protected function getDeepLTextOptions(): array
     {
         return [
@@ -54,6 +67,7 @@ class TranslateStrings
             'preserve_formatting' => $this->getOptionForLanguageOrDefault('preserve_formatting'),
             'tag_handling' => $this->getOptionForLanguageOrDefault('tag_handling'),
             'glossary' => $this->getOptionForLanguageOrDefault('glossary'),
+            'ignore_tags' => 'NOTRANSLATE',
         ];
     }
 
