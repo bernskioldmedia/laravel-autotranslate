@@ -36,7 +36,7 @@ class TranslateFile extends Command
                 ->map(function ($chunk) use ($translator, $language, &$errors) {
                     try {
                         return $translator->execute($chunk, $language)
-                            ->map(fn($value, $key) => [
+                            ->map(fn ($value, $key) => [
                                 'original' => $key,
                                 'translation' => $value,
                             ]);

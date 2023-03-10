@@ -4,6 +4,8 @@ namespace BernskioldMedia\Autotranslate;
 
 use DeepL\Translator;
 use Illuminate\Support\Collection;
+use function preg_replace;
+use function str_replace;
 
 class TranslateStrings
 {
@@ -56,7 +58,11 @@ class TranslateStrings
 
     protected function removeTagsFromVariables(string $string): string
     {
-        return preg_replace('/<NOTRANSLATE>:(\w+)<\/NOTRANSLATE>/', ':$1', $string);
+        $string = str_replace('<NOTRANSLATE>', '', $string);
+        $string = str_replace('</NOTRANSLATE>', '', $string);
+        $string = str_replace('<\/NOTRANSLATE>', '', $string);
+
+        return $string;
     }
 
     protected function getDeepLTextOptions(): array
