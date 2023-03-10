@@ -29,18 +29,24 @@ class TranslateFile extends Command
 
         try {
             $contents = File::get($path);
+            $originals = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
 
-            $translations = collect(json_decode($contents, true, 512, JSON_THROW_ON_ERROR))
+            $translations = collect($originals)
                 ->chunk(100)
                 ->map(function ($chunk) use ($translator, $language, &$errors) {
                     try {
-                        return $translator->execute($chunk, $language);
+                        return $translator->execute($chunk, $language)
+                            ->map(fn($value, $key) => [
+                                'original' => $key,
+                                'translation' => $value,
+                            ]);
                     } catch (DeepLException $e) {
                         $errors[] = $e->getMessage();
                         return collect();
                     }
                 })
-                ->flatten();
+                ->flatten(1)
+                ->pluck('translation', 'original');
 
             File::put($path, json_encode($translations, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         } catch (JsonException $e) {
