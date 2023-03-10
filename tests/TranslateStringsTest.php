@@ -50,3 +50,25 @@ it('skips translating previously translated strings', function () {
         'My already translated test string' => 'Min redan översatta teststräng',
     ]));
 });
+
+it('can translate with variables', function () {
+    $this->partialMock(Translator::class, function (MockInterface $mock) {
+        $mock->shouldReceive('translateText')
+            ->withAnyArgs()
+            ->once()
+            ->andReturn([
+                new TextResult('Min sträng med <NOTRANSLATE>:variable</NOTRANSLATE>', 'en'),
+            ]);
+    });
+
+    $results = app(TranslateStrings::class)->execute(
+        collect([
+            'My string with :variable' => 'My string with :variable',
+        ]),
+        'sv'
+    );
+
+    expect($results)->toEqual(collect([
+        'My string with :variable' => 'Min sträng med :variable',
+    ]));
+});
