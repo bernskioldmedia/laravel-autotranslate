@@ -50,7 +50,9 @@ class TranslateFile extends Command
                 ->flatten(1)
                 ->pluck('translation', 'original');
 
-            File::put($path, json_encode($translations, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            $stringsToSave = collect($originals)->merge($translations);
+
+            File::put($path, json_encode($stringsToSave, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         } catch (JsonException $e) {
             $this->error($e->getMessage());
 
