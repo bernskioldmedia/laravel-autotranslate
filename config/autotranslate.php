@@ -54,4 +54,12 @@ return [
 
     ],
 
+    /**
+     * You can exclude words from being translated by adding
+     * the raw string to this array.
+     */
+    'excluded_words' => [
+        // 'raw string',
+    ],
+
 ];

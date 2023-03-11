@@ -32,7 +32,7 @@ class TranslateFile extends Command
             $originals = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
 
             $translations = collect($originals)
-                ->chunk(100)
+                ->chunk(50)
                 ->map(function ($chunk) use ($translator, $language, &$errors) {
                     try {
                         return $translator->execute($chunk, $language)
