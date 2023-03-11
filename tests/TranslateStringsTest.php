@@ -57,7 +57,7 @@ it('can translate with variables', function () {
             ->withAnyArgs()
             ->once()
             ->andReturn([
-                new TextResult('Min sträng med <NOTRANSLATE>:variable</NOTRANSLATE>', 'en'),
+                new TextResult('Min sträng med <NOTRANSLATE>:variable<\/NOTRANSLATE>', 'en'),
             ]);
     });
 

@@ -14,27 +14,56 @@ use function lang_path;
 
 class TranslateFile extends Command
 {
-    public $signature = 'autotranslate:translate {lang}';
+    public $signature = 'autotranslate:translate {lang} {deeplCode?}';
 
     public $description = 'Translates the selected language file into the selected language.';
 
     public function handle(TranslateStrings $translator): int
     {
         $language = $this->argument('lang');
+        $deeplLanguageCode = $this->argument('deeplCode', $language);
 
         $path = lang_path($language.'.json');
+        $errors = [];
 
         $this->comment('Translating the file: '.$path);
 
         try {
             $contents = File::get($path);
-            $strings = collect(json_decode($contents, true, 512, JSON_THROW_ON_ERROR));
+            $originals = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
 
-            $translations = $translator->execute($strings, $language);
+            $translations = collect($originals)
+                ->chunk(50)
+                ->map(function ($chunk) use ($translator, $deeplLanguageCode, &$errors) {
+                    try {
+                        return $translator->execute($chunk, $deeplLanguageCode)
+                            ->map(fn ($value, $key) => [
+                                'original' => $key,
+                                'translation' => $value,
+                            ]);
+                    } catch (DeepLException $e) {
+                        $errors[] = $e->getMessage();
 
-            File::put($path, json_encode($translations, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        } catch (DeepLException|JsonException $e) {
+                        return collect();
+                    }
+                })
+                ->flatten(1)
+                ->pluck('translation', 'original');
+
+            $stringsToSave = collect($originals)->merge($translations);
+
+            File::put($path, json_encode($stringsToSave, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        } catch (JsonException $e) {
             $this->error($e->getMessage());
+
+            return self::FAILURE;
+        }
+
+        if (! empty($errors)) {
+            $this->error('The following errors occurred:');
+            foreach ($errors as $error) {
+                $this->error($error);
+            }
 
             return self::FAILURE;
         }

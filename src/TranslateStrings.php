@@ -2,8 +2,15 @@
 
 namespace BernskioldMedia\Autotranslate;
 
+use function collect;
+use function config;
 use DeepL\Translator;
+use const ENT_HTML5;
+use const ENT_QUOTES;
+use function html_entity_decode;
 use Illuminate\Support\Collection;
+use function preg_replace;
+use function str_replace;
 
 class TranslateStrings
 {
@@ -18,7 +25,8 @@ class TranslateStrings
     public function execute(Collection $strings, string $targetLanguage): Collection
     {
         $stringsToTranslate = $this->removePreviouslyTranslatedStrings($strings)
-            ->map(fn ($string) => $this->wrapVariablesInTags($string));
+            ->map(fn ($string) => $this->wrapVariablesInTags($string))
+            ->map(fn ($string) => $this->wrapExcludedWordsInTags($string));
 
         $rawTranslations = $this->translator->translateText(
             texts: $stringsToTranslate->values()->toArray(),
@@ -29,7 +37,8 @@ class TranslateStrings
 
         $translations = collect($rawTranslations)
             ->map(fn ($translation) => $translation->text)
-            ->map(fn ($translation) => $this->removeTagsFromVariables($translation));
+            ->map(fn ($translation) => $this->removeTagsFromVariables($translation))
+            ->map(fn ($translation) => $this->unencodeHtmlEntities($translation));
 
         // Add back the original keys to get the Original => Translated array structure.
         $translatedStrings = $stringsToTranslate->keys()->combine($translations);
@@ -44,6 +53,11 @@ class TranslateStrings
         ]);
     }
 
+    protected function unencodeHtmlEntities(string $string): string
+    {
+        return html_entity_decode($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
     protected function removePreviouslyTranslatedStrings(Collection $strings): Collection
     {
         return $strings->filter(fn ($value, $key) => $value === $key);
@@ -54,9 +68,26 @@ class TranslateStrings
         return preg_replace('/:(\w+)/', '<NOTRANSLATE>:$1</NOTRANSLATE>', $string);
     }
 
+    protected function wrapExcludedWordsInTags(string $string): string
+    {
+        $excludedWords = config('autotranslate.excluded_words');
+
+        if (empty($excludedWords)) {
+            return $string;
+        }
+
+        $excludedWords = collect($excludedWords)->map(fn ($word) => preg_quote($word))->implode('|');
+
+        return preg_replace('/('.$excludedWords.')/', '<NOTRANSLATE>$1</NOTRANSLATE>', $string);
+    }
+
     protected function removeTagsFromVariables(string $string): string
     {
-        return preg_replace('/<NOTRANSLATE>:(\w+)<\/NOTRANSLATE>/', ':$1', $string);
+        $string = str_replace('<NOTRANSLATE>', '', $string);
+        $string = str_replace('</NOTRANSLATE>', '', $string);
+        $string = str_replace('<\/NOTRANSLATE>', '', $string);
+
+        return $string;
     }
 
     protected function getDeepLTextOptions(): array
