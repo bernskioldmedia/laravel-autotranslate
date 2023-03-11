@@ -3,14 +3,14 @@
 namespace BernskioldMedia\Autotranslate\Commands;
 
 use BernskioldMedia\Autotranslate\TranslateStrings;
+use function collect;
 use DeepL\DeepLException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use JsonException;
-use function collect;
 use function json_decode;
-use function lang_path;
 use const JSON_THROW_ON_ERROR;
+use JsonException;
+use function lang_path;
 
 class TranslateFile extends Command
 {
@@ -23,10 +23,10 @@ class TranslateFile extends Command
         $language = $this->argument('lang');
         $deeplLanguageCode = $this->argument('deeplCode', $language);
 
-        $path = lang_path($language . '.json');
+        $path = lang_path($language.'.json');
         $errors = [];
 
-        $this->comment('Translating the file: ' . $path);
+        $this->comment('Translating the file: '.$path);
 
         try {
             $contents = File::get($path);
@@ -37,7 +37,7 @@ class TranslateFile extends Command
                 ->map(function ($chunk) use ($translator, $deeplLanguageCode, &$errors) {
                     try {
                         return $translator->execute($chunk, $deeplLanguageCode)
-                            ->map(fn($value, $key) => [
+                            ->map(fn ($value, $key) => [
                                 'original' => $key,
                                 'translation' => $value,
                             ]);
@@ -59,7 +59,7 @@ class TranslateFile extends Command
             return self::FAILURE;
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $this->error('The following errors occurred:');
             foreach ($errors as $error) {
                 $this->error($error);
