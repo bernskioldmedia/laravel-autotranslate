@@ -4,6 +4,7 @@ use DeepL\TextResult;
 use DeepL\Translator;
 use Illuminate\Support\Facades\File;
 use Mockery\MockInterface;
+
 use function Pest\testDirectory;
 
 it('can translate the file', function () {
