@@ -65,7 +65,7 @@ class TranslateStrings
 
     protected function wrapVariablesInTags(string $string): string
     {
-        return preg_replace('/:(\w+)/', '<NOTRANSLATE>:$1</NOTRANSLATE>', $string);
+        return preg_replace('/:(\w+)/', '<notranslate translate="no">:$1</notranslate>', $string);
     }
 
     protected function wrapExcludedWordsInTags(string $string): string
@@ -78,14 +78,14 @@ class TranslateStrings
 
         $excludedWords = collect($excludedWords)->map(fn ($word) => preg_quote($word))->implode('|');
 
-        return preg_replace('/('.$excludedWords.')/', '<NOTRANSLATE>$1</NOTRANSLATE>', $string);
+        return preg_replace('/('.$excludedWords.')/', '<notranslate translate="no">$1</notranslate>', $string);
     }
 
     protected function removeTagsFromVariables(string $string): string
     {
-        $string = str_replace('<NOTRANSLATE>', '', $string);
-        $string = str_replace('</NOTRANSLATE>', '', $string);
-        $string = str_replace('<\/NOTRANSLATE>', '', $string);
+        $string = str_replace('<notranslate translate="no">', '', $string);
+        $string = str_replace('</notranslate>', '', $string);
+        $string = str_replace('<\/notranslate>', '', $string);
 
         return $string;
     }
